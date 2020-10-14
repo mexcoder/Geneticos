@@ -1,7 +1,8 @@
 from interfaces.problem import Problem
 from interfaces.renderer import Renderer
+from cityRouteRenderer import CityRouteRenderer
 from city import City
-from individual import individual
+from interfaces.sequenceIndividual import SequenceIndividual
 
 class Traveler(Problem):
 
@@ -15,14 +16,19 @@ class Traveler(Problem):
 
         if renderer is not None and not isinstance(renderer, Renderer):
             raise ValueError("renderer must be a subclass of interfaces.Renderer")
+        if renderer is None:
+            renderer = CityRouteRenderer()
 
         # initialize values
         self._populationSize = populationSize
-        self.renderer = renderer
+        self._renderer = renderer
+        self._historicalTopScore = []
         self.genomeSize = len(self.getData())
 
         # init population
         self.generatePopulation()
+        TravelerIndividual.cityList = self.getData()
+        
 
     @property
     def population(self):
@@ -31,6 +37,17 @@ class Traveler(Problem):
     @property
     def populationSize(self):
         return self._populationSize
+
+    @property
+    def renderer(self):
+        return self._renderer
+
+    @property
+    def historicalTopScore(self):
+        return self._historicalTopScore
+
+    def addTopScore(self, score):
+        self._historicalTopScore.append(score)
 
     def getName(self):
         return "Traveler Problem"
@@ -54,8 +71,59 @@ class Traveler(Problem):
             ]
 
     def generatePopulation(self):
-        self._population = [individual.generateIndividual(self.genomeSize,
-                                                         0,
-                                                         self.genomeSize) 
+        self._population = [TravelerIndividual.generateIndividual(0,
+                                                                  self.genomeSize) 
                             for i in range(self._populationSize)]
         return self._population
+
+    def crossover(self):
+        # generate a new population selecting the best of 5% of the population
+        # selected randomly
+        newPop = []
+        for _ in range(self.populationSize):
+            # get 5% of the population at random
+            selected = self.selectPercentageFromPopulation(5)
+            # order by fitness
+            # if fitness is costly to calculate, consider catching the result
+            selected.sort(key=lambda i: i.getFitness())
+            # get the top individual of the selection
+            top = selected[0]
+            # insert the top individual to the new population
+            newPop.append(top)
+
+        # replace the old population with the new one
+        self._population = newPop
+
+class TravelerIndividual(SequenceIndividual):
+
+    cityList = None
+
+    def getFitness(self):
+        fitness = 0
+        for index in range(1, len(self.genome)):
+            cityOrig = self.geneToCity(self.genome[index-1])
+            cityDest = self.geneToCity(self.genome[index])
+            fitness += cityOrig.distanceTo(cityDest)
+        return fitness
+    
+    def geneToCity(self, cityIndex):
+        return TravelerIndividual.cityList[cityIndex]
+
+    def genomeToCityList(self):
+        if TravelerIndividual.cityList is None:
+            raise ValueError("City list has not been initialized")
+
+        return [ self.geneToCity(gene) for gene in self.genome]
+
+def test():
+    import random
+    random.seed(42)
+    t = Traveler()
+    # print(t.population[0].genomeToCityList())
+    # print(t.population[0].genomeToCityList()[0])
+    # print(TravelerIndividual.cityList)
+    t.run(wait=None)
+    
+
+if __name__ == '__main__':
+    test()

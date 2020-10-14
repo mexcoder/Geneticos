@@ -1,17 +1,17 @@
-from abc import ABC, abstractclassmethod
+from abc import ABC, abstractmethod
 
 
 class Renderer(ABC):
     
-    @abstractclassmethod
-    def renderIndividual(indv):
+    @abstractmethod
+    def renderIndividual(self, indv):
         raise NotImplementedError
     
-    @abstractclassmethod
-    def renderPopulation(pop):
+    @abstractmethod
+    def renderPopulation(self, pop):
         raise NotImplementedError
 
-    @abstractclassmethod
-    def renderResult(indv):
+    @abstractmethod
+    def renderScore(self, indv):
         raise NotImplementedError
 

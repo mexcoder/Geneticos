@@ -1,11 +1,11 @@
 import random
 from abc import ABC, abstractmethod
 
-class individual(ABC):
+class Individual(ABC):
 
-    @staticmethod
-    def generateIndividual(genomeSize, geneMin, geneMax):
-        return [random.randrange(geneMin, geneMax) for x in range(genomeSize)]
+    @classmethod
+    def generateIndividual(cls, genomeSize, geneMin, geneMax):
+        return cls([random.randrange(geneMin, geneMax) for x in range(genomeSize)])
     
     def __init__(self, genome=[]):
         self.genome = genome    
@@ -21,4 +21,4 @@ class individual(ABC):
         raise NotImplementedError
 
     def mutate(self):
-        raise NotImplementedError
+        random.shuffle(self.genome) # just an example
