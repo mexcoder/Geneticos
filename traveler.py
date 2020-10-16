@@ -3,9 +3,9 @@ from interfaces.renderer import Renderer
 from cityRouteRenderer import CityRouteRenderer
 from city import City
 from interfaces.sequenceIndividual import SequenceIndividual
+import mutators
 
 class Traveler(Problem):
-
 
     def __init__(self, populationSize=100, *args, renderer=None, **kwargs):
         # super(CLASS_NAME, self).__init__(*args, **kwargs)
@@ -22,7 +22,7 @@ class Traveler(Problem):
         # initialize values
         self._populationSize = populationSize
         self._renderer = renderer
-        self._historicalTopScore = []
+        self._historicalTopIndividuals = []
         self.genomeSize = len(self.getData())
 
         # init population
@@ -44,10 +44,14 @@ class Traveler(Problem):
 
     @property
     def historicalTopScore(self):
-        return self._historicalTopScore
+        return [individual.fitness for individual in self._historicalTopIndividuals]
 
-    def addTopScore(self, score):
-        self._historicalTopScore.append(score)
+    @property
+    def historicalTopIndividuals(self):
+        return self._historicalTopIndividuals
+
+    def addTopIndividual(self, individual):
+        self._historicalTopIndividuals.append(individual)
 
     def getName(self):
         return "Traveler Problem"
@@ -71,8 +75,7 @@ class Traveler(Problem):
             ]
 
     def generatePopulation(self):
-        self._population = [TravelerIndividual.generateIndividual(0,
-                                                                  self.genomeSize) 
+        self._population = [TravelerIndividual.generateIndividual(0, self.genomeSize) 
                             for i in range(self._populationSize)]
         return self._population
 
@@ -83,13 +86,10 @@ class Traveler(Problem):
         for _ in range(self.populationSize):
             # get 5% of the population at random
             selected = self.selectPercentageFromPopulation(5)
-            # order by fitness
-            # if fitness is costly to calculate, consider catching the result
-            selected.sort(key=lambda i: i.getFitness())
-            # get the top individual of the selection
-            top = selected[0]
+            # get the top individual by fitness of the selection
+            top = min(selected, key=lambda i: i.fitness)
             # insert the top individual to the new population
-            newPop.append(top)
+            newPop.append(top.clone())
 
         # replace the old population with the new one
         self._population = newPop
@@ -97,6 +97,12 @@ class Traveler(Problem):
 class TravelerIndividual(SequenceIndividual):
 
     cityList = None
+
+    @property
+    def mutators(self):
+        return [mutators.geneInverseMutator,
+                mutators.noMutationMutator,
+                mutators.geneSwapMutator]
 
     def getFitness(self):
         fitness = 0

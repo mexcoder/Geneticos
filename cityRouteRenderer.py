@@ -7,12 +7,17 @@ class CityRouteRenderer (MatplotlibRenderer):
 
     
     def configurePopulationPlot(self, plt):
-
+        self.setGrid(plt)
         plt.set_title("Best individual route")
         
-    def configureScorePlot(self, plt):
+    def configureScorePlot(self, plt, best = None, current = None):
+        self.setGrid(plt)
         plt.set_title("Best individual score across generations")
-        plt.set_ylabel("Score")
+        if best is None:
+            plt.set_ylabel("Score")
+        else:
+            plt.set_ylabel("Score - Current {1:.2f} - Best {0:.2f}".format(best, current))
+        
         plt.set_xlabel("Generation")
         plt.can_pan()
         plt.can_zoom()
@@ -25,7 +30,8 @@ class CityRouteRenderer (MatplotlibRenderer):
         """ 
         plt = self.getPopulationPlot()
         plt.clear()
-        self.setGrid(plt)
+        self.configurePopulationPlot(plt)
+        plt.set_xlabel("Generation {}".format(self.frame))
         route = individual.genomeToCityList()
         plt.plot([city.x for city in route[1:-1]],
                  [city.y for city in route[1:-1]],
@@ -56,10 +62,9 @@ class CityRouteRenderer (MatplotlibRenderer):
 
         
     def renderScore(self, problemScore):
-        print(len(problemScore), problemScore[-1])
         plt = self.getScorePlot()
         plt.clear()
-        self.setGrid(plt)
+        self.configureScorePlot(plt, min(problemScore), problemScore[-1])
         plt.plot(problemScore, marker='o')
 
     def renderPopulation(self, pop):

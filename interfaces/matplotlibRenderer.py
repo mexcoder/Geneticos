@@ -10,8 +10,7 @@ class MatplotlibRenderer(Renderer):
         plt.ion() # activate interactive mode
         plt.show() # open the window without blocking
 
-        #tmp
-        self.i = 0
+        self.frame = 0
     
     def __del__(self):
         plt.ioff() # disable interactive mode
@@ -33,7 +32,7 @@ class MatplotlibRenderer(Renderer):
         return plt.subplot(122, label="score")
 
     def draw(self):
-        plt.savefig("render/{}.png".format(self.i), format="png")
-        self.i += 1
         plt.draw()
         plt.pause(.001)
+        plt.savefig("render/{}.png".format(self.frame), format="png")
+        self.frame += 1

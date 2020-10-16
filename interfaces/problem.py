@@ -20,8 +20,12 @@ class Problem(ABC):
     def historicalTopScore(self):
         raise NotImplementedError
 
+    @abstractproperty
+    def historicalTopIndividuals(self):
+        raise NotImplementedError
+
     @abstractmethod
-    def addTopScore(self, score):
+    def addTopIndividual(self, individual):
         raise NotImplementedError
 
     @abstractmethod
@@ -43,15 +47,6 @@ class Problem(ABC):
         for individual in self.population:
             individual.mutate()
 
-    def populationSortFunction(self, taggedIndividual):
-        return taggedIndividual[0]
-
-    def tagPopulationFitness(self):
-        return self.tagFitness(self.population)
-
-    def tagFitness(self, individuals):
-        return [(individual.getFitness(), individual) for individual in individuals]
-
     def selectPercentageFromPopulation(self, percent):
         number = int(percent * self.populationSize / 100)
         return self.selectFromPopulation(number)
@@ -63,17 +58,12 @@ class Problem(ABC):
         """ runs an iteration consisting of a fitness tagging, a round of selections
             an the generation of a new population
         """
-        # tag the fitness of the population
-        tPop = self.tagPopulationFitness()
-
-        # order the population according to its performance
-        tPop.sort(key=self.populationSortFunction)
 
         # get the top individual and its score
-        topScore, topIndividual = tPop[0]
+        topIndividual = min(self.population, key=lambda i: i.fitness)
         
         # register the top score
-        self.addTopScore(topScore)
+        self.addTopIndividual(topIndividual)
 
         # render if needed
         if self.renderer is not None:

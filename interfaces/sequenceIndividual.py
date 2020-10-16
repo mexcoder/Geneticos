@@ -1,6 +1,7 @@
 from .individual import Individual
 import random
 
+# TODO: rename 2 ordinalIndividual
 class SequenceIndividual(Individual):
     
     @classmethod
