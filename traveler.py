@@ -2,8 +2,9 @@ from interfaces.problem import Problem
 from interfaces.renderer import Renderer
 from cityRouteRenderer import CityRouteRenderer
 from city import City
-from interfaces.sequenceIndividual import SequenceIndividual
+from interfaces.ordinalIndividual import OrdinalIndividual
 import mutators
+import ordinalReproductors as reproductors
 
 class Traveler(Problem):
 
@@ -89,20 +90,24 @@ class Traveler(Problem):
             # get the top individual by fitness of the selection
             top = min(selected, key=lambda i: i.fitness)
             # insert the top individual to the new population
-            newPop.append(top.clone())
+            newPop.append(top.reproduce(None))
 
         # replace the old population with the new one
         self._population = newPop
 
-class TravelerIndividual(SequenceIndividual):
+class TravelerIndividual(OrdinalIndividual):
 
     cityList = None
 
     @property
     def mutators(self):
-        return [mutators.geneInverseMutator,
-                mutators.noMutationMutator,
-                mutators.geneSwapMutator]
+        return [mutators.noopMutator]
+
+    @property
+    def reproductors(self):
+        return [reproductors.geneInverseReprodcutor,
+                #reproductors.noopReprodcutor,
+                reproductors.geneSwapReprodcutor]
 
     def getFitness(self):
         fitness = 0
@@ -123,7 +128,7 @@ class TravelerIndividual(SequenceIndividual):
 
 def test():
     import random
-    random.seed(42)
+    # random.seed(42)
     t = Traveler()
     # print(t.population[0].genomeToCityList())
     # print(t.population[0].genomeToCityList()[0])

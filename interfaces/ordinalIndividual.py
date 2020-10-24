@@ -1,8 +1,7 @@
 from .individual import Individual
 import random
 
-# TODO: rename 2 ordinalIndividual
-class SequenceIndividual(Individual):
+class OrdinalIndividual(Individual):
     
     @classmethod
     def generateIndividual(cls, geneMin, geneMax):

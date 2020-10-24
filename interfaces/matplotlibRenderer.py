@@ -7,6 +7,9 @@ class MatplotlibRenderer(Renderer):
     def __init__(self, *args, **kwargs):
         self.configurePopulationPlot(self.getPopulationPlot())
         self.configureScorePlot(self.getScorePlot())
+        mng = plt.get_current_fig_manager()
+
+        mng.window.state('zoomed') #works fine on Windows!
         plt.ion() # activate interactive mode
         plt.show() # open the window without blocking
 

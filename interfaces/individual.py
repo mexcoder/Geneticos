@@ -11,6 +11,10 @@ class Individual(ABC):
     def mutators(self):
         raise NotImplementedError
 
+    @abstractproperty
+    def reproductors(self):
+        raise NotImplementedError
+
     @classmethod
     def generateIndividual(cls, genomeSize, geneMin, geneMax):
         return cls([random.randrange(geneMin, geneMax) for x in range(genomeSize)])
@@ -26,6 +30,9 @@ class Individual(ABC):
 
     def __getRandomMutator(self):
         return random.choice(self.mutators)
+
+    def __getRandomReproductor(self):
+        return random.choice(self.reproductors)
 
     def __repr__(self):
         return "<{} fitnes:{:.2f}>".format(self.__class__.__name__, self.fitness)
@@ -44,6 +51,10 @@ class Individual(ABC):
     def mutate(self):
         mutator = self.__getRandomMutator()
         self.genome = mutator.mutate(self.genome)
+
+    def reproduce(self, other):
+        reproducer = self.__getRandomReproductor()
+        return reproducer.reproduce(self, other)
 
     def clone(self):
         return self.__class__(self.genome)
