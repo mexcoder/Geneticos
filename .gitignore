@@ -130,3 +130,5 @@ dmypy.json
 
 # render output folder
 render/
+# seeds folder
+seed/*.seed

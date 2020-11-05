@@ -11,6 +11,13 @@
             "program": "${workspaceFolder}/traveler.py"
         },
         {
+            "name": "equation Problem",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/equation.py",
+            "args": ["--elitism"]
+        },
+        {
             "name": "Python: Current File",
             "type": "python",
             "request": "launch",

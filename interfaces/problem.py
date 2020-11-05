@@ -42,9 +42,22 @@ class Problem(ABC):
     def crossover(self):
         """ generates a new population to mutate """
         raise NotImplementedError
+
+    @property
+    def mutationPercentage(self):
+        return 0
+
+    @property
+    def enableElitism(self):
+        return False
     
     def mutate(self):
-        for individual in self.population:
+        if self.mutationPercentage == 0:
+            return
+
+        popToMutate = self.selectFromPopulation(self.mutationPercentage)
+
+        for individual in popToMutate:
             individual.mutate()
 
     def selectPercentageFromPopulation(self, percent):

@@ -73,6 +73,14 @@ class Point(Problem):
             # insert the top individual to the new population
             newPop += list(top.reproduce(runnerUp))
 
+        if self.enableElitism:
+            # append the old population
+            newPop += self.population
+            # sort
+            newPop.sort(key = lambda i: i.fitness)
+            # get the top individuals
+            newPop = newPop[:self.populationSize]
+
         # replace the old population with the new one
         self._population = newPop
 
