@@ -98,7 +98,8 @@ class EquationIndividual(PointIndividual):
 @click.option('--mutation', default=0, help='percentage of the population to mutate')
 @click.option('--elitism/--no-elitism', is_flag=True, flag_value=True, help='enable the elitism')
 @click.option('--seedFile', default=None, help='the seed satateFile to use for the prng')
-def test(mutation, elitism, seedfile):
+@click.option('--generations', default=150, help='the number of generations to process')
+def test(mutation, elitism, seedfile, generations):
     import random
     import sys
     import pickle
@@ -130,7 +131,7 @@ def test(mutation, elitism, seedfile):
     # print(t.population[0].genomeToCityList())
     # print(t.population[0].genomeToCityList()[0])
     # print(PointIndividual.cityList)
-    t.run(wait=None, iterations=150)
+    t.run(wait=None, iterations=generations)
     
 
 if __name__ == '__main__':

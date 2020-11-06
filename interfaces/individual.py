@@ -51,6 +51,14 @@ class Individual(ABC):
     def mutate(self):
         mutator = self.__getRandomMutator()
         self.genome = mutator.mutate(self.genome)
+        # invalidate the property cache
+        try:
+            del self.fitness
+        except AttributeError:
+            pass
+
+    def clone(self):
+        return self.__class__(self.genome)
 
     def reproduce(self, other):
         reproducer = self.__getRandomReproductor()
