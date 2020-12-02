@@ -76,7 +76,7 @@ class Problem(ABC):
         topIndividual = min(self.population, key=lambda i: i.fitness)
         
         # register the top score
-        self.addTopIndividual(topIndividual)
+        self.addTopIndividual(topIndividual.clone())
 
         # render if needed
         if self.renderer is not None:

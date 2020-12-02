@@ -9,7 +9,10 @@ class MatplotlibRenderer(Renderer):
         self.configureScorePlot(self.getScorePlot())
         mng = plt.get_current_fig_manager()
 
-        mng.window.state('zoomed') #works fine on Windows!
+        try:
+            mng.window.state('zoomed') #works fine on Windows!
+        except:
+            mng.window.wm_attributes('-zoomed', 1) #works fine on Linux!
         plt.ion() # activate interactive mode
         plt.show() # open the window without blocking
 
